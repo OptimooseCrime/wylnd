@@ -131,6 +131,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
                 height: 10.0,
               ),
               RaisedButton(
+                shape: StadiumBorder(),
                 child: Text('Save'),
                 textColor: Colors.white,
                 onPressed: _submitForm,

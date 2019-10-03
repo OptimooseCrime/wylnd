@@ -109,9 +109,16 @@ class _AuthPageState extends State<AuthPage> {
                     SizedBox(
                       height: 10.0,
                     ),
-                    RaisedButton(
+                    new RaisedButton(
+                      shape: StadiumBorder(),
+                      color: Theme.of(context).accentColor.withOpacity(0.7),
                       textColor: Colors.white,
                       child: Text('LOGIN'),
+                      // borderSide: BorderSide(
+                      //     color: Colors.deepPurple[50],
+                      //     style: BorderStyle.solid,
+                      //     width: 1
+                      //     ),
                       onPressed: _submitForm,
                     ),
                   ],
