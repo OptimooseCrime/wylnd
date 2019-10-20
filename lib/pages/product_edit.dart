@@ -98,13 +98,15 @@ class _ProductEditPageState extends State<ProductEditPage> {
     if (!_formKey.currentState.validate()) {
       return;
     }
+    // sets the initial value and is used for editing existing data
+    ///\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
     _formKey.currentState.save();
     if (widget.product == null) {
       widget.addProduct(_formData);
     } else {
       widget.updateProduct(widget.productIndex, _formData);
     }
-
+    // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/ \/\/\/\/\/\/\/\/\/\/\/\/
     Navigator.pushReplacementNamed(context, '/products');
   }
 
