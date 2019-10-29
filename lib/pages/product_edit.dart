@@ -33,6 +33,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     return EnsureVisibleWhenFocused(
       focusNode: _titleFocusNode,
       child: TextFormField(
+        autofocus: true,
         focusNode: _titleFocusNode,
         decoration: InputDecoration(labelText: 'Product Title'),
         initialValue: widget.product == null ? '' : widget.product['title'],
