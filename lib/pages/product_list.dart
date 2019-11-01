@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 
 import './product_edit.dart';
+import '../models/product.dart';
 
 class ProductListPage extends StatelessWidget {
   final Function updateProduct;
   final Function deletePreoduct;
-  final List<Map<String, dynamic>> products;
+  final List<Product> products;
 
   ProductListPage(this.products, this.updateProduct, this.deletePreoduct);
 
   Widget _buildEditButton(BuildContext context, int index){
-    return IconButton(
+   return IconButton(
       icon: Icon(Icons.edit),
       onPressed: () {
         Navigator.of(context).push(
@@ -34,7 +35,7 @@ class ProductListPage extends StatelessWidget {
       padding: EdgeInsets.all(20.0),
       itemBuilder: (BuildContext context, int index) {
         return Dismissible(
-          key: Key(products[index]['title']),
+          key: Key(products[index].title),
           onDismissed: (DismissDirection direction) {
             if (direction == DismissDirection.endToStart) {
               print('Swipe delete');
@@ -53,11 +54,11 @@ class ProductListPage extends StatelessWidget {
           child: Card(
             child: ListTile(
               leading: CircleAvatar(
-                  backgroundImage: AssetImage(products[index]['image'])),
+                  backgroundImage: AssetImage(products[index].image)),
               contentPadding: EdgeInsets.all(10),
-              title: Text(products[index]['title']),
-              subtitle: Text('\$${products[index]['price'].toString()}'),
-              trailing: _buildEditButton(context, index)
+              title: Text(products[index].title),
+              subtitle: Text('\$${products[index].price.toString()}'),
+              trailing: _buildEditButton(context, index),
             ),
           ),
         );

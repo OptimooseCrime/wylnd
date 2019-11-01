@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../widgets/helpers/ensure_visible.dart';
+import '../models/product.dart';
 
 class ProductEditPage extends StatefulWidget {
   final Function addProduct;
   final Function updateProduct;
-  final Map<String, dynamic> product;
+  final Product product;
   final int productIndex;
 
   ProductEditPage(
@@ -36,7 +37,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
         autofocus: true,
         focusNode: _titleFocusNode,
         decoration: InputDecoration(labelText: 'Product Title'),
-        initialValue: widget.product == null ? '' : widget.product['title'],
+        initialValue: widget.product == null ? '' : widget.product.title,
         validator: (String value) {
           // if (value.trim().length <= 0) {
           if (value.isEmpty || value.length < 5) {
@@ -58,7 +59,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
         maxLines: 4,
         decoration: InputDecoration(labelText: 'Product Description'),
         initialValue:
-            widget.product == null ? '' : widget.product['description'],
+            widget.product == null ? '' : widget.product.description,
         validator: (String value) {
           // if (value.trim().length <= 0) {
           if (value.isEmpty || value.length < 10) {
@@ -80,7 +81,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
         keyboardType: TextInputType.number,
         decoration: InputDecoration(labelText: 'Product Price'),
         initialValue:
-            widget.product == null ? '' : widget.product['price'].toString(),
+            widget.product == null ? '' : widget.product.price.toString(),
         validator: (String value) {
           // if (value.trim().length <= 0) {
           if (value.isEmpty ||
@@ -95,11 +96,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  Widget _buildPageContent(BuildContext context){
+  Widget _buildPageContent(BuildContext context) {
     final double deviceWidth = MediaQuery.of(context).size.width;
     final double targetWidth = deviceWidth > 550.0 ? 500.0 : deviceWidth * 0.95;
     final double targetPadding = deviceWidth - targetWidth;
-    final Widget pageContent = GestureDetector(
+    return GestureDetector(
       onTap: () {
         FocusScope.of(context).requestFocus(FocusNode());
       },
@@ -145,9 +146,23 @@ class _ProductEditPageState extends State<ProductEditPage> {
     ///\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
     _formKey.currentState.save();
     if (widget.product == null) {
-      widget.addProduct(_formData);
+      widget.addProduct(
+        Product(
+          title:_formData['title'], 
+          description: _formData['description'], 
+          price: _formData['price'], 
+          image: _formData['image'],
+        )
+      );
     } else {
-      widget.updateProduct(widget.productIndex, _formData);
+      widget.updateProduct(
+        widget.productIndex,
+        Product(
+          title:_formData['title'], 
+          description: _formData['description'], 
+          price: _formData['price'], 
+          image: _formData['image'],
+        ));
     }
     // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/ \/\/\/\/\/\/\/\/\/\/\/\/
     Navigator.pushReplacementNamed(context, '/products');
@@ -155,6 +170,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
 
   @override
   Widget build(BuildContext context) {
+ 
     final Widget pageContent = _buildPageContent(context);
     return widget.product == null
         ? pageContent
