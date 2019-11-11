@@ -52,6 +52,7 @@ class ProductListPage extends StatelessWidget {
             color: Colors.red[300],
           ),
           child: Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             child: ListTile(
               leading: CircleAvatar(
                   backgroundImage: AssetImage(products[index].image)),
