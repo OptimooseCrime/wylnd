@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-
 import 'package:scoped_model/scoped_model.dart';
 
 import '../widgets/helpers/ensure_visible.dart';
 import '../models/product.dart';
-import '../scoped_models/products.dart';
+import '../scoped-models/products.dart';
 
 class ProductEditPage extends StatefulWidget {
   final Function addProduct;
@@ -27,7 +26,6 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'description': null,
     'price': null,
     'image': 'assets/forestBackground.png',
-    
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _titleFocusNode = FocusNode();
@@ -158,12 +156,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
     ///\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
     _formKey.currentState.save();
     if (widget.product == null) {
-      addProduct(
-        Product(
-          title: _formData['title'],
-          description: _formData['description'],
-          price: _formData['price'],
-          image: _formData['image'],
+      addProduct(Product(
+        title: _formData['title'],
+        description: _formData['description'],
+        price: _formData['price'],
+        image: _formData['image'],
       ));
     } else {
       updateProduct(

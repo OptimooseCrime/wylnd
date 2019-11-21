@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import '../widgets/products/products.dart';
 
 class ProductsPage extends StatelessWidget {
-
-
   Widget _buildSideDrawer(BuildContext context) {
     return Drawer(
       child: Column(
