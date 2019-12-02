@@ -24,10 +24,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  List<Product> products = [];
-
 // ************* MOVED TO BE MANAGED BY SCOPED MODEL *************
-
+  // List<Product> products = [];
   // void _addProduct(Product product) {
   //   setState(() {
   //     _products.add(product);
@@ -50,9 +48,9 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModel<ProductsModel>(
-      model: ProductsModel(),
-      child: MaterialApp(
+    return new ScopedModel<ProductsModel>(
+      model: new ProductsModel(),
+      child: new MaterialApp(
         // debugShowMaterialGrid: true,
         theme: ThemeData(
             brightness: Brightness.light,
