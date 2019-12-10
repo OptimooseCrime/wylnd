@@ -13,6 +13,7 @@ class Product {
     @required this.image
     }
   );
+  Map<String, dynamic> toMap() {
       return {
         'title': title,
         'description': description,
