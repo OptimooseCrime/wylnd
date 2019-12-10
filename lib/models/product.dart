@@ -13,4 +13,11 @@ class Product {
     @required this.image
     }
   );
+      return {
+        'title': title,
+        'description': description,
+        'price': price,
+        'image': image
+      };
+    }
 }
