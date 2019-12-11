@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 class Product {
-  final String title;
-  final String description;
-  final double price;
-  final String image;
+  String title;
+  String description;
+  double price;
+  String image;
 
   Product(
     {
@@ -20,5 +20,11 @@ class Product {
         'price': price,
         'image': image
       };
-    }
+  }
+  Product.fromMap(Map map) {
+    this.title = map['name'];
+    this.description = map['description'];
+    this.price = map['price'];
+    this.image = map['price'];
+  }
 }

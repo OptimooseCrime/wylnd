@@ -6,12 +6,14 @@ import '../ui_elements/title_default.dart';
 import '../../models/product.dart';
 
 class ProductCard extends StatelessWidget {
-  final Product product;
-  final int productIndex;
+  final productMap;
+  
+  final productIndex;
 
-  ProductCard(this.product, this.productIndex);
+  ProductCard(this.productMap, this.productIndex);
 
   Widget _buildTitlePriceRow() {
+  var product = new Product.fromMap(productMap);
     return Container(
       padding: EdgeInsets.only(top: 10.0),
       child: Row(
@@ -21,7 +23,7 @@ class ProductCard extends StatelessWidget {
           SizedBox(
             width: 8.0,
           ),
-          PriceTag(product.price.toString())
+          PriceTag(productMap.price.toString())
         ],
       ),
     );
@@ -35,13 +37,13 @@ class ProductCard extends StatelessWidget {
           icon: Icon(Icons.info),
           color: Theme.of(context).accentColor,
           onPressed: () => Navigator.pushNamed<bool>(
-              context, '/product/' + productIndex.toString()),
+              context, '/product/' + productIndex),
         ),
         IconButton(
           icon: Icon(Icons.favorite_border),
           color: Colors.red,
           onPressed: () => Navigator.pushNamed<bool>(
-              context, '/product/' + productIndex.toString()),
+              context, '/product/' + productIndex),
         )
       ],
     );
@@ -49,10 +51,11 @@ class ProductCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var product = new Product.fromMap(productMap);
     return Card(
       child: Column(
         children: <Widget>[
-          Image.asset(product.image),
+          Image.network(productMap.image),
           _buildTitlePriceRow(),
           AddressTag('Union Square, San Francisco'),
           _buildActionButtons(context)

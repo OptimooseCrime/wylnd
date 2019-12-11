@@ -33,7 +33,11 @@ class ProductsPage extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.favorite),
             onPressed: () {},
-          )
+          ),
+          IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () => '',
+            ),
         ],
       ),
       body: Products(),

@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/ui_elements/title_default.dart';
@@ -24,12 +24,12 @@ class ProductPage extends StatelessWidget {
           margin: EdgeInsets.symmetric(horizontal: 5.0),
           child: Text(
             '|',
-            style: TextStyle(color: Colors.grey),
+            style: TextStyle(color: Colors.grey, fontSize: 20),
           ),
         ),
         Text(
           '\$' + price.toString(),
-          style: TextStyle(fontFamily: 'Oswald', color: Colors.grey),
+          style: TextStyle(fontFamily: 'Oswald', color: Colors.grey, fontSize: 20),
         )
       ],
     );
@@ -37,6 +37,7 @@ class ProductPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return WillPopScope(
       onWillPop: () {
         print('Back button pressed!');
@@ -46,11 +47,22 @@ class ProductPage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(title),
+          actions: <Widget>[
+            IconButton(
+            icon: Icon(Icons.favorite),
+            onPressed: () {},
+          ),
+            IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () => '',
+            ),
+            
+          ],
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.asset(imageUrl),
+            Image.network(imageUrl),
             Container(
               padding: EdgeInsets.all(10.0),
               child: TitleDefault(title),
@@ -62,6 +74,31 @@ class ProductPage extends StatelessWidget {
                 description,
                 textAlign: TextAlign.center,
               ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                FlatButton(
+                  child: Icon(Icons.add_shopping_cart),
+                  onPressed: () => '',
+                  color: Colors.teal,
+                  textColor: Colors.white,
+                  
+                ),
+                FlatButton(
+                  child: Icon(Icons.chat),
+                  onPressed: () => '',
+                  color: Colors.teal,
+                  textColor: Colors.white,
+                ),
+                FlatButton(
+                  child: Icon(Icons.help),
+                  onPressed: () => '',
+                  color: Colors.teal,
+                  textColor: Colors.white,
+                  
+                )
+              ],
             )
           ],
         ),
