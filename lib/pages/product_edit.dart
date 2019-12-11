@@ -1,5 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../widgets/helpers/ensure_visible.dart';
 import '../models/product.dart';
@@ -25,13 +30,43 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'title': null,
     'description': null,
     'price': null,
-    'image': 'assets/forestBackground.png',
+    'image': null,
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _titleFocusNode = FocusNode();
   final _descriptionFocusNode = FocusNode();
   final _priceFocusNode = FocusNode();
-
+  var _image;
+ 
+  String fileName = new DateTime.now().millisecondsSinceEpoch.toString();
+  FirebaseStorage _storage = FirebaseStorage.instance;
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = image;
+    });
+    StorageReference reference = _storage.ref().child(fileName);
+    StorageUploadTask uploadTask = reference.putFile(image);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    
+    
+    var location = await taskSnapshot.ref.getDownloadURL();
+    _formData['image'] = location.toString();
+  }
+  Widget _buildImagePicker() {
+    
+    return Column(
+        children: <Widget>[ _image == null
+            ? Text('No image selected.')
+            : Image.file(_image),
+            IconButton(
+            icon: Icon(Icons.add_a_photo),
+            tooltip: 'Take Photo to Upload',
+            onPressed: () => getImage()
+            ),
+        ],
+      );
+  }
   Widget _buildTitleTextField() {
     return EnsureVisibleWhenFocused(
       focusNode: _titleFocusNode,
@@ -104,7 +139,8 @@ class _ProductEditPageState extends State<ProductEditPage> {
           shape: StadiumBorder(),
           child: Text('Save'),
           textColor: Colors.white,
-          onPressed: () => _submitForm(model.addProduct, model.updateProduct),
+          onPressed: () => _submitForm(model.addProduct),
+          
           //^^ only passes references to both
         );
       },
@@ -129,6 +165,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
               _buildTitleTextField(),
               _buildDescriptionTextField(),
               _buildPriceTextField(),
+              _buildImagePicker(),
               SizedBox(
                 height: 10.0,
               ),
@@ -148,21 +185,27 @@ class _ProductEditPageState extends State<ProductEditPage> {
     );
   }
 
-  void _submitForm(Function addProduct, Function updateProduct) {
+  void _submitForm(Function addProduct) {
     if (!_formKey.currentState.validate()) {
       return;
     }
     // sets the initial value and is used for editing existing data
     ///\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
     _formKey.currentState.save();
-    if (widget.product == null) {
-      addProduct(Product(
+    //if (widget.product == null) {
+        final CollectionReference dbItems = Firestore.instance.collection('items');
+    Firestore.instance.runTransaction((Transaction tx) async {
+      await dbItems.add(_formData);
+      
+    });
+      /*addProduct(Product(
         title: _formData['title'],
         description: _formData['description'],
         price: _formData['price'],
         image: _formData['image'],
-      ));
-    } else {
+      ));*/
+      print(_formData['image']);
+    /*} else {
       updateProduct(
           widget.productIndex,
           Product(
@@ -171,11 +214,11 @@ class _ProductEditPageState extends State<ProductEditPage> {
             price: _formData['price'],
             image: _formData['image'],
           ));
-    }
+    }*/
     // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/ \/\/\/\/\/\/\/\/\/\/\/\/
     Navigator.pushReplacementNamed(context, '/products');
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     final Widget pageContent = _buildPageContent(context);
