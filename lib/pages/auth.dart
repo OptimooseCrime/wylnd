@@ -1,4 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+//import '../main.dart';
+import 'products.dart';
+
 
 class AuthPage extends StatefulWidget {
   @override
@@ -69,14 +73,23 @@ class _AuthPageState extends State<AuthPage> {
       title: Text('Accept Terms'),
     );
   }
-
-  void _submitForm() {
+final FirebaseAuth _auth = FirebaseAuth.instance;
+  void _submitForm() async {
     if (!_formKey.currentState.validate() || !_formData['acceptTerms']) {
       return;
     }
     _formKey.currentState.save();
+    final FirebaseUser user = (await _auth.signInWithEmailAndPassword(
+      email: _formData['email'],
+      password: _formData['password']
+    )).user;
     print(_formData);
-    Navigator.pushReplacementNamed(context, '/products');
+    print(user);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+              builder: (BuildContext context) => ProductsPage(user: user)),
+    );
   }
 
   @override

@@ -60,7 +60,10 @@ class Products extends StatelessWidget {
                 return Card(
                   child: Column(
                     children: <Widget>[
-                      Image.network(documentData['image']),
+                      SizedBox(
+                        height: 140,
+                        child: Image.network(documentData['image']),
+                      ),
                       Container(
       padding: EdgeInsets.only(top: 10.0),
       child: Row(

@@ -41,7 +41,12 @@ class _ProductEditPageState extends State<ProductEditPage> {
   String fileName = new DateTime.now().millisecondsSinceEpoch.toString();
   FirebaseStorage _storage = FirebaseStorage.instance;
   Future getImage() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var image = await ImagePicker.pickImage(
+      source: ImageSource.camera,
+      //imageQuality: 10,
+      maxHeight: 480,
+      maxWidth: 640,
+      );
     setState(() {
       _image = image;
     });

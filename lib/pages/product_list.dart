@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import './product_edit.dart';
 import '../models/product.dart';
 
@@ -28,18 +28,21 @@ class ProductListPage extends StatelessWidget {
       },
     );
   }
+  var itemStream = Firestore.instance.collection('items').snapshots();
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
+    return StreamBuilder(
+      stream: itemStream,
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        return ListView(
       padding: EdgeInsets.all(20.0),
-      itemBuilder: (BuildContext context, int index) {
-        return Dismissible(
-          key: Key(products[index].title),
+      children: snapshot.data.documents.map((DocumentSnapshot document) {
+        return new Dismissible(
+          key: Key(document.documentID),
           onDismissed: (DismissDirection direction) {
             if (direction == DismissDirection.endToStart) {
               print('Swipe delete');
-              deletePreoduct(index);
             } else if (direction == DismissDirection.startToEnd) {
               print('Start to end');
             } else {
@@ -55,16 +58,22 @@ class ProductListPage extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
             child: ListTile(
               leading: CircleAvatar(
-                  backgroundImage: AssetImage(products[index].image)),
+                  backgroundImage: NetworkImage(
+                    document['image'],
+                    scale: 50,
+                    ),
+              ),
               contentPadding: EdgeInsets.all(10),
-              title: Text(products[index].title),
-              subtitle: Text('\$${products[index].price.toString()}'),
-              trailing: _buildEditButton(context, index),
+              title: Text(document['title']),
+              subtitle: Text('\$${document["price"].toString()}'),
+              trailing: _buildEditButton(context, 4),
             ),
           ),
         );
-      },
-      itemCount: products.length,
+      }).toList(),
     );
+      }
+    );
+    
   }
 }
