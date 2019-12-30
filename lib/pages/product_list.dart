@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import './product_edit.dart';
@@ -8,7 +9,9 @@ class ProductListPage extends StatelessWidget {
   final Function deletePreoduct;
   final List<Product> products;
 
-  ProductListPage(this.products, this.updateProduct, this.deletePreoduct);
+
+  ProductListPage(this.products, this.updateProduct, this.deletePreoduct, this.user);
+  final FirebaseUser user;
 
   Widget _buildEditButton(BuildContext context, int index){
    return IconButton(
@@ -28,52 +31,72 @@ class ProductListPage extends StatelessWidget {
       },
     );
   }
-  var itemStream = Firestore.instance.collection('items').snapshots();
 
   @override
   Widget build(BuildContext context) {
+    var itemStream = Firestore.instance.collection('items').where('userId', isEqualTo:  user.uid).snapshots();
     return StreamBuilder(
       stream: itemStream,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        return ListView(
-      padding: EdgeInsets.all(20.0),
-      children: snapshot.data.documents.map((DocumentSnapshot document) {
-        return new Dismissible(
-          key: Key(document.documentID),
-          onDismissed: (DismissDirection direction) {
-            if (direction == DismissDirection.endToStart) {
-              print('Swipe delete');
-            } else if (direction == DismissDirection.startToEnd) {
-              print('Start to end');
-            } else {
-              print('other swiping occured');
-            }
-          },
-          background: Container(
-            child: Icon(Icons.delete),
-            // child: Text('DELETE? \n >>>>'),
-            color: Colors.red[300],
-          ),
-          child: Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-            child: ListTile(
-              leading: CircleAvatar(
-                  backgroundImage: NetworkImage(
-                    document['image'],
-                    scale: 50,
+        if(snapshot.hasData) {
+          print(snapshot.data.documents.length);
+          if (snapshot.data.documents.length != 0){
+          return ListView(
+            padding: EdgeInsets.all(20.0),
+            children: snapshot.data.documents.map((DocumentSnapshot document) {
+        
+              print(document.runtimeType);
+              return new Dismissible(
+                key: Key(document.documentID),
+                onDismissed: (DismissDirection direction) {
+                  if (direction == DismissDirection.endToStart) {
+                    print('Swipe delete');
+                  } else if (direction == DismissDirection.startToEnd) {
+                    print('Start to end');
+                  } else {
+                    print('other swiping occured');
+                  }
+                },
+                background: Container(
+                  child: Icon(Icons.delete),
+                  // child: Text('DELETE? \n >>>>'),
+                  color: Colors.red[300],
+                ),
+                child: Card(
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: NetworkImage(
+                        document['image'],
+                        scale: 50,
+                      ),
                     ),
+                    contentPadding: EdgeInsets.all(10),
+                    title: Text(document['title']),
+                    subtitle: Text('\$${document["price"].toString()}'),
+                    trailing: _buildEditButton(context, 4),
+                  ),
+                ),
+              );  
+            }).toList(),
+          );
+          }
+          else{
+          return new Center(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 30),
+              child: Text(
+                'You ave no items listed. Create a listing and you can manage it here!'
               ),
-              contentPadding: EdgeInsets.all(10),
-              title: Text(document['title']),
-              subtitle: Text('\$${document["price"].toString()}'),
-              trailing: _buildEditButton(context, 4),
             ),
-          ),
-        );
-      }).toList(),
-    );
+          );
+        }
+        }else{
+          return new Center(
+            child: CircularProgressIndicator(backgroundColor: Colors.teal,)
+          );
+        }
       }
-    );
-    
+    );  
   }
 }
