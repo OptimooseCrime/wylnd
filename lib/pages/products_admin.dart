@@ -7,7 +7,7 @@ import './product_list.dart';
 
 class ProductsAdminPage extends StatelessWidget {
   FirebaseUser user;
-  
+
   ProductsAdminPage({this.user});
   Widget _buildSideDrawer(BuildContext context) {
     return Drawer(
@@ -56,7 +56,7 @@ class ProductsAdminPage extends StatelessWidget {
         ),
         body: TabBarView(
           children: <Widget>[
-            ProductEditPage(),
+            ProductEditPage(user: user,),
             ProductListPage(null, null, null)
           ],
         ),

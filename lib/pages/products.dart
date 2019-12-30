@@ -19,7 +19,7 @@ class ProductsPage extends StatelessWidget {
           ),
           ListTile(
             leading: Icon(Icons.account_circle),
-            title: Text(user.email+' Account'),
+            title: Text(user.email),
             onTap: () {
               Navigator.push(
                 context, 

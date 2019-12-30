@@ -1,11 +1,11 @@
 import 'dart:async';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
-
+import 'products.dart';
 import '../widgets/helpers/ensure_visible.dart';
 import '../models/product.dart';
 import '../scoped-models/products.dart';
@@ -15,9 +15,9 @@ class ProductEditPage extends StatefulWidget {
   final Function updateProduct;
   final Product product;
   final int productIndex;
-
+  FirebaseUser user;
   ProductEditPage(
-      {this.addProduct, this.updateProduct, this.product, this.productIndex});
+      {this.user, this.addProduct, this.updateProduct, this.product, this.productIndex});
 
   @override
   State<StatefulWidget> createState() {
@@ -31,6 +31,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     'description': null,
     'price': null,
     'image': null,
+    'userId': null,
   };
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final _titleFocusNode = FocusNode();
@@ -57,6 +58,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
     
     var location = await taskSnapshot.ref.getDownloadURL();
     _formData['image'] = location.toString();
+    print(location);
   }
   Widget _buildImagePicker() {
     
@@ -94,6 +96,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
   }
 
   Widget _buildDescriptionTextField() {
+    
     return EnsureVisibleWhenFocused(
       focusNode: _descriptionFocusNode,
       child: TextFormField(
@@ -109,6 +112,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
         },
         onSaved: (String value) {
           _formData['description'] = value;
+          _formData['userId'] = widget.user.uid;
         },
       ),
     );
@@ -194,22 +198,29 @@ class _ProductEditPageState extends State<ProductEditPage> {
     if (!_formKey.currentState.validate()) {
       return;
     }
+    print(_formData);
     // sets the initial value and is used for editing existing data
     ///\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
     _formKey.currentState.save();
     //if (widget.product == null) {
         final CollectionReference dbItems = Firestore.instance.collection('items');
-    Firestore.instance.runTransaction((Transaction tx) async {
-      await dbItems.add(_formData);
-      
-    });
+    if(_formData['image'] != null) {
+      Firestore.instance.runTransaction((Transaction tx) async {
+        await dbItems.add(await _formData);
+      });
+      Navigator.push(
+      context,
+      MaterialPageRoute(
+              builder: (BuildContext context) => ProductsPage(user: widget.user)),
+      );
+    }
       /*addProduct(Product(
         title: _formData['title'],
         description: _formData['description'],
         price: _formData['price'],
         image: _formData['image'],
       ));*/
-      print(_formData['image']);
+      print(_formData);
     /*} else {
       updateProduct(
           widget.productIndex,
@@ -221,7 +232,7 @@ class _ProductEditPageState extends State<ProductEditPage> {
           ));
     }*/
     // \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/ \/\/\/\/\/\/\/\/\/\/\/\/
-    Navigator.pushReplacementNamed(context, '/products');
+    
   }
  
   @override

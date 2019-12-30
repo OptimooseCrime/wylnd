@@ -1,17 +1,27 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:stripe_payment/stripe_payment.dart';
+import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
+import 'package:intl/intl.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import '../widgets/ui_elements/title_default.dart';
 
-class ProductPage extends StatelessWidget {
+class ProductPage extends StatefulWidget {
   final String title;
   final String imageUrl;
   final double price;
   final String description;
+  var pickedRange;
+  var dateStart;
+  var dateEnd;
 
   ProductPage(this.title, this.imageUrl, this.price, this.description);
-
+  @override
+  State<StatefulWidget> createState() {
+    return _ProductPageState();
+  }
+}
+class _ProductPageState extends State<ProductPage> {
   Widget _buildAddressPriceRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -28,16 +38,31 @@ class ProductPage extends StatelessWidget {
           ),
         ),
         Text(
-          '\$' + price.toString(),
+          '\$' + widget.price.toString(),
           style: TextStyle(fontFamily: 'Oswald', color: Colors.grey, fontSize: 20),
         )
       ],
     );
   }
+  Future<DateTime> selectedDate(BuildContext context) async {
+      final List<DateTime> picked = await DateRagePicker.showDatePicker(
+          context: context,
+          initialFirstDate: new DateTime.now(),
+          initialLastDate: (new DateTime.now()).add(new Duration(days: 7)),
+          firstDate: new DateTime(2018),
+          lastDate: new DateTime(2022)
+      );
+      initializeDateFormatting('us');
+      setState(() {
+        widget.pickedRange = picked;
+        widget.dateStart = DateFormat.yMMMEd().format(widget.pickedRange[0]);
+        widget.dateEnd =  DateFormat.yMMMEd().format(widget.pickedRange[1]);
+      });
 
+  }
   @override
   Widget build(BuildContext context) {
-
+  print(widget.pickedRange);
     return WillPopScope(
       onWillPop: () {
         print('Back button pressed!');
@@ -46,7 +71,7 @@ class ProductPage extends StatelessWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(title),
+          title: Text(widget.title),
           actions: <Widget>[
             IconButton(
             icon: Icon(Icons.favorite),
@@ -54,33 +79,81 @@ class ProductPage extends StatelessWidget {
           ),
             IconButton(
               icon: Icon(Icons.shopping_cart),
-              onPressed: () => '',
+              onPressed: () => selectedDate,
             ),
             
           ],
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        body: Center(
+          child: ListView(
+          //crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Image.network(imageUrl),
+            SizedBox(
+              height: 350,
+              child: Image.network(widget.imageUrl),
+            ),
             Container(
               padding: EdgeInsets.all(10.0),
-              child: TitleDefault(title),
+              child: Center( 
+                child: TitleDefault(widget.title),
+              ),
             ),
             _buildAddressPriceRow(),
             Container(
               padding: EdgeInsets.all(10.0),
               child: Text(
-                description,
+                widget.description,
                 textAlign: TextAlign.center,
               ),
+            ),
+            Divider(
+              thickness: 3,
+            ),
+            Center(
+              child: Text(
+                'Rental Duration',
+                style: TextStyle(
+                  fontSize: 18, 
+                  fontWeight: FontWeight.w500, 
+                  color: Colors.teal,
+                ),
+              ),
+            ), 
+            FlatButton(
+              textColor: Colors.black54,
+              padding: EdgeInsets.symmetric(vertical: 15),
+              child: widget.pickedRange == null ? 
+                Text(
+                  'Select Dates',
+                  style: TextStyle(fontSize: 16),
+                ) : 
+                Column(
+                  children: <Widget> [  
+                    Text(
+                      widget.dateStart.toString(),
+                      style: TextStyle(fontSize: 15),
+                    ),
+                    Text(
+                      'to',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    Text(
+                      widget.dateEnd.toString(),
+                      style: TextStyle(fontSize: 15),
+                    ),
+                  ],
+                ), 
+              onPressed: () => selectedDate(context),
+            ),
+            Divider(
+              thickness: 3,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 FlatButton(
                   child: Icon(Icons.add_shopping_cart),
-                  onPressed: () => '',
+                  onPressed: () => selectedDate(context),
                   color: Colors.teal,
                   textColor: Colors.white,
                   
@@ -101,6 +174,7 @@ class ProductPage extends StatelessWidget {
               ],
             )
           ],
+        ),
         ),
       ),
     );
