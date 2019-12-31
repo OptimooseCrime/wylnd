@@ -5,6 +5,9 @@ import 'package:date_range_picker/date_range_picker.dart' as DateRagePicker;
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import '../widgets/ui_elements/title_default.dart';
+import '../config.dart';
+import 'package:square_in_app_payments/models.dart';
+import 'package:square_in_app_payments/in_app_payments.dart';
 
 class ProductPage extends StatefulWidget {
   final String title;
@@ -22,6 +25,31 @@ class ProductPage extends StatefulWidget {
   }
 }
 class _ProductPageState extends State<ProductPage> {
+   
+  Future<void> _pay() async {
+    InAppPayments.setSquareApplicationId(sqrAppId);
+    InAppPayments.startCardEntryFlow(
+        onCardNonceRequestSuccess: _onCardEntryCardNonceRequestSuccess,
+        onCardEntryCancel: _onCancelCardEntryFlow);
+  }
+  void _onCardEntryCardNonceRequestSuccess(CardDetails result) async {
+      // take payment with the card nonce details
+      // you can take a charge
+      // await chargeCard(result);
+      print(result.nonce);
+      // payment finished successfully
+      // you must call this method to close card entry
+      InAppPayments.completeCardEntry(
+          onCardEntryComplete: _onCardEntryComplete);
+    
+  }
+  void _onCardEntryComplete() {
+    // Update UI to notify user that the payment flow is finished successfully
+  }
+  void _onCancelCardEntryFlow() {
+    // Handle the cancel callback
+  }
+
   Widget _buildAddressPriceRow() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -159,8 +187,8 @@ class _ProductPageState extends State<ProductPage> {
                   
                 ),
                 FlatButton(
-                  child: Icon(Icons.chat),
-                  onPressed: () => '',
+                  child: Icon(Icons.payment),
+                  onPressed: () => _pay(),
                   color: Colors.teal,
                   textColor: Colors.white,
                 ),
