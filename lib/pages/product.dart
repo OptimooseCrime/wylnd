@@ -79,6 +79,34 @@ class _ProductPageState extends State<ProductPage> {
     var responseBody = json.decode(response.body);
     if (response.statusCode == 200) {
       print("status code: 200 ##");
+      print(responseBody);
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            content: Stack(
+              overflow: Overflow.visible,
+              children: <Widget>[
+                Positioned(
+                    right: -40.0,
+                    top: -40.0,
+                    child: InkResponse(
+                      onTap: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: CircleAvatar(
+                        child: Icon(Icons.close),
+                        backgroundColor: Colors.red,
+                      ),
+                    )),
+                Center(
+                  child: Text("Rental Complete: " + response.body),
+                ),
+              ],
+            ),
+          );
+        },
+      );
       return;
     } else {
       print("ERROROR");
