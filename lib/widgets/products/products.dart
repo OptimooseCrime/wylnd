@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-
+import '../../pages/product.dart';
+import 'address_tag.dart';
 import 'package:scoped_model/scoped_model.dart';
 import './product_card.dart';
 import '../../models/product.dart';
 import '../../scoped-models/products.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Products extends StatelessWidget {
   Widget _buildProductList(List<Product> products) {
@@ -20,17 +22,6 @@ class Products extends StatelessWidget {
     return productCards;
   }
 
-<<<<<<< Updated upstream
-  @override
-  Widget build(BuildContext context) {
-    print('[Products Widget] build()');
-    // **** STATE MANAGEMENT TOOLS HERE ****
-    return ScopedModelDescendant<ProductsModel>(
-      builder: (BuildContext context, Widget child, ProductsModel model) {
-        // ^^ 'ProductsModel' INHERITS FROM 'Model'
-        return _buildProductList(model.products);
-        //^^ PASSED IN FROM SCOPED MODEL WHENEVER MODEL CHANGES^^
-=======
   Widget buildTitlePriceRow(context, product) {
     //var product = new Product.fromMap(productMap);
     print(product['description']);
@@ -165,7 +156,6 @@ class Products extends StatelessWidget {
               }).toList(),
             );
         }
->>>>>>> Stashed changes
       },
     );
   }
