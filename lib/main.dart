@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 // import 'package:flutter/rendering.dart';
 import 'package:scoped_model/scoped_model.dart';
 
+import './widgets/ui_elements/theme_data.dart' as theme;
 import './pages/auth.dart';
 import './pages/products_admin.dart';
 import './pages/products.dart';
 import './pages/product.dart';
-import './models/product.dart';
+//import './models/product.dart';
 import './scoped-models/products.dart';
 
 void main() {
@@ -45,6 +46,24 @@ class _MyAppState extends State<MyApp> {
   //   });
   // }
   // ************* MOVED TO BE MANAGED BY SCOPED MODEL *************
+  final ThemeData _themeDatatemp = new ThemeData(
+    primaryTextTheme: TextTheme(
+        headline6: TextStyle(color: Color(0xffff34b3)),
+        bodyText2: TextStyle(color: Color(0xff201148))),
+    buttonTheme: ButtonThemeData(
+      buttonColor: Color(0xff00ccfd),
+      hoverColor: Color(0xff2011a2),
+      splashColor: Color(0xffff34b3),
+    ),
+    accentIconTheme: IconThemeData(
+      color: Color(0xff00ccfd),
+    ),
+    primaryIconTheme: IconThemeData(color: Color(0xff55e7ff)),
+    brightness: Brightness.light,
+    primarySwatch: Colors.indigo,
+    accentColor: Color(0xff55e7ff),
+    buttonColor: Color(0xff55e7ff),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +71,7 @@ class _MyAppState extends State<MyApp> {
       model: new ProductsModel(),
       child: new MaterialApp(
         // debugShowMaterialGrid: true,
-        theme: ThemeData(
-            brightness: Brightness.light,
-            primarySwatch: Colors.teal,
-            accentColor: Colors.deepPurple,
-            buttonColor: Colors.deepPurple),
+        theme: _themeDatatemp,
         // home: AuthPage(),
         routes: {
           '/': (BuildContext context) => AuthPage(),
@@ -69,7 +84,7 @@ class _MyAppState extends State<MyApp> {
             return null;
           }
           if (pathElements[1] == 'product') {
-            final int index = int.parse(pathElements[2]);
+            //final int index = int.parse(pathElements[2]);
             return MaterialPageRoute<bool>(
               builder: (BuildContext context) =>
                   ProductPage(null, null, null, null),
@@ -79,7 +94,8 @@ class _MyAppState extends State<MyApp> {
         },
         onUnknownRoute: (RouteSettings settings) {
           return MaterialPageRoute(
-              builder: (BuildContext context) => ProductsPage());
+            builder: (BuildContext context) => ProductsPage(),
+          );
         },
       ),
     );
